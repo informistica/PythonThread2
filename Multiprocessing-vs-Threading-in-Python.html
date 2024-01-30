@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html class="translated-ltr" lang="it"><link type="text/css" rel="stylesheet" id="dark-mode-custom-link"><link type="text/css" rel="stylesheet" id="dark-mode-general-link"><style type="text/css" id="dark-mode-custom-style" lang="en"></style><style type="text/css" id="dark-mode-native-style" lang="en"></style><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <!-- base href="https://blog.floydhub.com/multiprocessing-vs-threading-in-python-what-every-data-scientist-needs-to-know/" --> 
+  <title>Multiprocessing vs. Threading in Python: What Every Data Scientist Needs to Know</title> 
+  <meta charset="utf-8"> 
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+  <meta name="HandheldFriendly" content="True"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <style>
+        :root {
+            --button-bg-color: #ffffff;
+            --button-text-color: var(--color-darkgrey);
+        }
+    </style> 
+  <link rel="stylesheet" type="text/css" href="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/screen.css"> 
+ 
+
+ 
+<style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style> 
+   
+  
+  <style>
+    #fh-banner {
+        margin: 1.5em 0;
+    	padding: 4.5vw 4vw 4vw;
+    	border: 1px solid #edf4f8;
+    	text-align: center;
+    	background: #f4f8fb;
+	    border-radius: 7px;
+        width: 100%;
+        box-shadow: 0 0 8px 0 rgba(0, 0, 0, .13), 0 20px 30px 0 rgba(0, 0, 0, .15);
+    }
+    #fh-banner-main-text {
+        margin: 0 0 3px;
+        padding: 0;
+        color: #15171a;
+        font-size: 3.5rem;
+        line-height: 1;
+        font-weight: 700;
+    }
+    #fh-banner-sub-text {
+        margin-bottom: 1em; margin-top:1em;
+        color: #738a94;
+        font-size: 2.2rem;
+        font-weight: 500;
+        letter-spacing: .2px;
+    }
+    #fh-banner-button-link {
+        display: inline-block;
+        margin: 0 0 0 10px;
+        padding: 0 20px;
+        height: 49px;
+        outline: none;
+        color: #fff;
+        font-size: 1.5rem;
+        line-height: 37px;
+        font-weight: 500;
+        text-align: center;
+        text-shadow: 0 -1px 0 rgba(0,0,0,.1);
+        background: linear-gradient(#4fb7f0,#29a0e0 60%,#29a0e0 90%,#36a6e2);
+        border-radius: 5px;
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,.14);
+        -webkit-font-smoothing: subpixel-antialiased;
+        width: 220px;
+    }
+    
+    #fh-banner-button-link:hover {
+    	background: linear-gradient(#4194f2,#3687e3 60%,#3687e3 90%,#328aed);
+    }
+    
+    #fh-banner-button-link-text {
+        color:white;
+        padding: none;
+        padding-top: 0.5rem;
+        font-size: 1.75rem;
+        margin: none;
+    }
+
+	.home-template .tag-hash-hide,
+	.tag-template .tag-hash-hide {
+   		display:none;
+	}
+	.post-template .tag-hash-hide {
+   		display:block;
+	}
+</style>
+  <style>:root {--ghost-accent-color: #15171A;}</style> 
+  <link rel="stylesheet" type="text/css" href="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/prism-tomorrow.css"> 
+  <meta http-equiv="X-Translated-By" content="Google">
+  <meta http-equiv="X-Translated-To" content="it">
+  <style>
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */</style><style>
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */</style><style id="fit-vids-style">.fluid-width-video-container{flex-grow: 1;width:100%;}.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style></head> 
+ <body class="post-template tag-data-science" style="margin-top: 56px;">
+  <div class="viewport">
+    
+   <div class="site-content"> 
+    <main id="site-main" class="site-main"> 
+     <article class="article post tag-data-science "> 
+      <header class="article-header gh-canvas"> 
+       <section class="article-tag"> 
+        <a href="https://blog-floydhub-com.translate.goog/tag/data-science/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Scienza dei dati</font></font></a> 
+       </section> 
+       <h1 class="article-title"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Multiprocessing vs. Threading in Python: ciò che ogni scienziato di dati deve sapere</font></font></h1> 
+       <p class="article-excerpt"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Questo
+ approfondito approfondimento sulle librerie di parallelizzazione Python
+ - multiprocessing e threading - spiegherà quali utilizzare quando per 
+diversi set di problemi di data scientist.</font></font></p>
+       <div class="article-byline">
+         <section class="article-byline-content"> 
+         <div class="article-byline-meta">
+           <h4 class="author-name">
+             <section class="gh-content gh-canvas">
+               <!--kg-card-begin: markdown-->
+             </section>
+           </h4>
+         </div>
+         </section>
+       </div>
+      </header>
+      <section class="gh-content gh-canvas">
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Prima o poi, ogni progetto di data science deve affrontare una sfida inevitabile: la velocità. </font><font style="vertical-align: inherit;">Lavorare
+          con set di dati più grandi porta a un'elaborazione più lenta degli 
+          stessi, quindi alla fine dovrai pensare a ottimizzare il tempo di 
+          esecuzione del tuo algoritmo. </font><font style="vertical-align: inherit;">Come molti di voi già sanno, la parallelizzazione è un passaggio necessario di questa ottimizzazione. </font><font style="vertical-align: inherit;">Python offre due librerie integrate per la parallelizzazione: multiprocessing e threading. </font><font style="vertical-align: inherit;" class="">In
+            questo articolo, esploreremo come i data scientist possono scegliere 
+            tra i due e quali fattori dovrebbero essere tenuti presenti mentre lo 
+            fanno.</font></font></p> 
+       <h2 id="parallelcomputinganddatascience"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Calcolo parallelo e scienza dei dati</font></font></h2> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Come
+ tutti sapete, la scienza dei dati è la scienza che consente di gestire 
+grandi quantità di dati e di estrarne informazioni utili. </font><font style="vertical-align: inherit;">Il
+ più delle volte, le operazioni che eseguiamo sui dati sono facilmente 
+parallelizzabili, il che significa che diversi agenti di elaborazione 
+possono eseguire l'operazione sui dati un pezzo alla volta, quindi 
+combinare i risultati alla fine per ottenere il risultato completo.</font></font></p> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Per visualizzare meglio la parallelizzabilità, consideriamo un'analogia con il mondo reale. </font><font style="vertical-align: inherit;">Supponiamo di dover pulire tre stanze della tua casa. </font><font style="vertical-align: inherit;">Puoi
+ fare tutto da solo, pulendo le stanze una dopo l'altra, oppure puoi 
+chiedere ai tuoi due fratelli di aiutarti, ognuno di voi pulisce una 
+singola stanza. </font><font style="vertical-align: inherit;">In 
+quest'ultimo approccio, ognuno di voi sta lavorando parallelamente su 
+una parte dell'intero compito, riducendo così il tempo totale necessario
+ per completarlo. </font><font style="vertical-align: inherit;">Questa è la parallelizzabilità in azione.</font></font></p> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">L'elaborazione parallela può essere ottenuta in Python in due modi diversi: multiprocessing e threading.</font></font></p> 
+       <h2 id="multiprocessingandthreadingtheory"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Multiprocessing e Threading: Teoria</font></font></h2> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Fondamentalmente,
+ il multiprocessing e il threading sono due modi per ottenere il calcolo
+ parallelo, utilizzando rispettivamente processi e thread come agenti di
+ elaborazione. </font><font style="vertical-align: inherit;">Per capire come funzionano, dobbiamo chiarire cosa sono i processi e i thread.</font></font></p> 
+       <p><img src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/apps-processes-threads.png" alt="app-processi-thread" width="895" height="498" loading="lazy"></p> 
+       <h3 id="process"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Processi</font></font></h3> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Un processo è un'istanza di un programma per computer in esecuzione. </font><font style="vertical-align: inherit;">Ogni
+ processo ha il proprio spazio di memoria che utilizza per archiviare le
+ istruzioni in esecuzione, nonché tutti i dati necessari per archiviare e
+ accedere per l'esecuzione.</font></font></p> 
+       <h3 ><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Thread</font></font></h3> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">I thread sono componenti di un processo che possono essere eseguiti in parallelo. </font><font style="vertical-align: inherit;">Possono
+ esserci più thread in un processo e condividono lo stesso spazio di 
+memoria, ovvero lo spazio di memoria del processo padre. <br>
+       </font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Ciò significherebbe che il codice da eseguire e tutte le variabili dichiarate nel programma sarebbero condivise da tutti i thread.</font></font> </p>
+<p><img src="Multiprocessing vs. Threading in Python What Every Data Scientist Needs to Know_files/processi-e-thread.png" width="392" height="333"></p> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Processo e thread, di I, </font></font><a href="sl=auto&amp;tl=it&amp;u=https://commons.wikimedia.org/wiki/User:Cburnett" title="Utente: Cburnett"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Cburnett</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> , </font></font><a href="sl=auto&amp;tl=it&amp;u=http://creativecommons.org/licenses/by-sa/3.0/" title="Attribuzione Creative Commons-Condividi allo stesso modo 3.0"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">CC BY-SA 3.0</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> , </font></font><a href="sl=auto&amp;tl=it&amp;u=https://commons.wikimedia.org/w/index.php?curid%3D2233446"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">collegamento</font></font></a></p> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Ad esempio, consideriamo i programmi in esecuzione sul tuo computer in questo momento. </font><font style="vertical-align: inherit;">Probabilmente stai leggendo questo articolo in un browser, che probabilmente ha più schede aperte. </font><font style="vertical-align: inherit;">Potresti anche ascoltare musica tramite l'app desktop Spotify allo stesso tempo. </font><font style="vertical-align: inherit;">Il browser e l'applicazione Spotify sono processi diversi; </font><font style="vertical-align: inherit;">ognuno di essi può utilizzare più processi o thread per ottenere il parallelismo. </font><font style="vertical-align: inherit;">Schede diverse nel tuo browser potrebbero essere eseguite in thread diversi. </font><font style="vertical-align: inherit;">Spotify
+ può riprodurre musica in un thread, scaricare musica da Internet in un 
+altro e utilizzarne un terzo per visualizzare la GUI. </font><font style="vertical-align: inherit;">Questo sarebbe chiamato multithreading. </font><font style="vertical-align: inherit;">Lo stesso può essere fatto con il multiprocessing, anche con più processi. </font><font style="vertical-align: inherit;">In
+ effetti, la maggior parte dei browser moderni come Chrome e Firefox 
+utilizza il multiprocessing, non il multithreading, per gestire più 
+schede.</font></font></p> 
+       <h3 id="technicaldetails"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Dettagli tecnici</font></font></h3> 
+       <ul> 
+        <li> <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Tutti i thread di un processo vivono nello stesso spazio di memoria, mentre i processi hanno il loro spazio di memoria separato.</font></font></p> </li> 
+        <li> <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">I thread sono più leggeri e hanno un sovraccarico inferiore rispetto ai processi. </font><font style="vertical-align: inherit;">I processi di spawn sono un po' più lenti dei thread di spawn.</font></font></p> </li> 
+        <li> <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">La condivisione di oggetti tra thread è più semplice, poiché condividono lo stesso spazio di memoria. </font><font style="vertical-align: inherit;">Per
+ ottenere lo stesso risultato tra i processi, dobbiamo utilizzare una 
+sorta di modello IPC (comunicazione tra processi), generalmente fornito 
+dal sistema operativo.</font></font></p> </li> 
+       </ul> 
+       <h3 id="pitfallsofparallelcomputing"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Insidie ​​del calcolo parallelo</font></font></h3> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">L'introduzione del parallelismo in un programma non è sempre un gioco a somma positiva; </font><font style="vertical-align: inherit;">ci sono alcune insidie ​​di cui essere consapevoli. </font><font style="vertical-align: inherit;">I più importanti sono i seguenti.</font></font></p> 
+       <ul> 
+        <li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Condizione di competizione</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+ : come abbiamo già discusso, i thread hanno uno spazio di memoria 
+condiviso e quindi possono avere accesso a variabili condivise. Una race
+ condition si verifica quando più thread tentano di modificare la stessa
+ variabile contemporaneamente. Lo scheduler dei thread può scambiare 
+arbitrariamente tra i thread, quindi non abbiamo modo di conoscere 
+l'ordine in cui i thread cercheranno di modificare i dati. Ciò può 
+comportare un comportamento errato in uno dei thread, in particolare se i
+ thread decidono di eseguire qualcosa in base al valore della variabile.
+ Per evitare che ciò accada, è possibile posizionare un </font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">blocco</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+ di esclusione reciproca (o mutex) attorno alla parte di codice che 
+modifica la variabile in modo che un solo thread alla volta possa 
+scrivere sulla variabile.</font></font></li> 
+        <li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Starvation</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+ : la fame si verifica quando a un thread viene negato l'accesso a una 
+determinata risorsa per periodi di tempo più lunghi e, di conseguenza, 
+il programma generale rallenta. </font><font style="vertical-align: inherit;">Ciò può verificarsi come effetto collaterale indesiderato di un algoritmo di pianificazione dei thread mal progettato.</font></font></li> 
+        <li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Deadlock</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> : l'uso eccessivo dei blocchi mutex ha anche uno svantaggio: può introdurre deadlock nel programma. </font><font style="vertical-align: inherit;">Un
+ deadlock è uno stato in cui un thread è in attesa che un altro thread 
+rilasci un blocco, ma quell'altro thread ha bisogno di una risorsa per 
+terminare che il primo thread sta trattenendo. </font><font style="vertical-align: inherit;">In questo modo, entrambi i thread si fermano e il programma si interrompe. </font><font style="vertical-align: inherit;">Deadlock può essere considerato un caso estremo di fame. </font><font style="vertical-align: inherit;">Per evitare ciò, dobbiamo stare attenti a non introdurre troppi blocchi interdipendenti.</font></font></li> 
+        <li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Livelock</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> : Livelock è quando i thread continuano a funzionare in un ciclo ma non fanno alcun progresso. </font><font style="vertical-align: inherit;">Ciò deriva anche da una progettazione scadente e dall'uso improprio dei blocchi mutex.</font></font></li> 
+       </ul> 
+       <h2 id="multiprocessingandthreadinginpython"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Multiprocessing e Threading in Python</font></font></h2> 
+       <h3 id="theglobalinterpreterlock"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Il blocco globale dell'interprete</font></font></h3> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Quando si tratta di Python, ci sono alcune stranezze da tenere a mente. </font><font style="vertical-align: inherit;">Sappiamo
+ che i thread condividono lo stesso spazio di memoria, quindi è 
+necessario prendere precauzioni speciali in modo che due thread non 
+scrivano nella stessa posizione di memoria. </font><font style="vertical-align: inherit;">L'interprete CPython gestisce questo utilizzando un meccanismo chiamato </font></font><code>GIL</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">, o Global Interpreter Lock.</font></font></p> 
+       <p><font style="vertical-align: inherit;"></font><a href="sl=auto&amp;tl=it&amp;u=https://wiki.python.org/moin/GlobalInterpreterLock"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Dal wiki</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> di Python </font><font style="vertical-align: inherit;">:</font></font></p> 
+       <blockquote> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">In CPython, il </font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">global interpreter lock</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> , o </font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">GIL</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+ , è un mutex che protegge l'accesso agli oggetti Python, impedendo a 
+più thread di eseguire bytecode Python contemporaneamente. </font><font style="vertical-align: inherit;">Questo blocco è necessario principalmente perché la gestione della memoria di CPython non è thread-safe.</font></font></p> 
+       </blockquote> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Controlla le diapositive </font></font><a href="sl=auto&amp;tl=it&amp;u=https://www.dabeaz.com/python/UnderstandingGIL.pdf"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">qui</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> per uno sguardo più dettagliato a Python </font></font><code>GIL</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">.</font></font></p> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Il </font></font><code>GIL</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ottiene il suo lavoro fatto, ma ad un costo. </font><font style="vertical-align: inherit;">Serializza efficacemente le istruzioni a livello di interprete. </font><font style="vertical-align: inherit;">Come funziona è il seguente: affinché qualsiasi thread esegua qualsiasi funzione, deve acquisire un blocco globale. </font><font style="vertical-align: inherit;">Solo un singolo thread può acquisire quel blocco alla volta, il che significa che </font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">l'interprete esegue le istruzioni in modo seriale</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> . </font><font style="vertical-align: inherit;">Questo design rende la gestione della memoria thread-safe, ma di conseguenza non può utilizzare più core della CPU. </font><font style="vertical-align: inherit;">Nelle CPU single-core, che è ciò che i progettisti avevano in mente durante lo sviluppo di CPython, non è un grosso problema. </font><font style="vertical-align: inherit;">Ma questo blocco globale finisce per essere un collo di bottiglia se stai usando CPU multi-core.</font></font></p> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Questo
+ collo di bottiglia, tuttavia, diventa irrilevante se il programma 
+presenta un collo di bottiglia più grave altrove, ad esempio nella rete,
+ nell'IO o nell'interazione dell'utente. </font><font style="vertical-align: inherit;">In questi casi, il threading è un metodo di parallelizzazione del tutto efficace. </font><font style="vertical-align: inherit;">Ma per i programmi che sono vincolati alla CPU, il threading finisce per rallentare il programma. </font><font style="vertical-align: inherit;">Esploriamo questo con alcuni casi d'uso di esempio.</font></font></p> 
+       <h3 id="usecasesforthreading"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Casi d'uso per il threading</font></font></h3> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">I programmi della GUI utilizzano il threading tutto il tempo per rendere le applicazioni reattive. </font><font style="vertical-align: inherit;">Ad
+ esempio, in un programma di modifica del testo, un thread può occuparsi
+ della registrazione degli input dell'utente, un altro può essere 
+responsabile della visualizzazione del testo, un terzo può eseguire il 
+controllo ortografico e così via. </font><font style="vertical-align: inherit;">Qui, il programma deve attendere l'interazione dell'utente, che è il collo di bottiglia più grande. </font><font style="vertical-align: inherit;">L'uso del multiprocessing non renderà il programma più veloce.</font></font></p> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Un altro caso d'uso per il threading sono i programmi associati a IO o di rete, come </font></font><a href="https://blog-floydhub-com.translate.goog/web-scraping-with-python/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">web-scrapers</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> . </font><font style="vertical-align: inherit;">In questo caso, più thread possono occuparsi dello scraping di più pagine Web in parallelo. </font><font style="vertical-align: inherit;">I
+ thread devono scaricare le pagine Web da Internet e questo sarà il 
+collo di bottiglia più grande, quindi il threading è una soluzione 
+perfetta qui. </font><font style="vertical-align: inherit;">I server Web, essendo legati alla rete, funzionano in modo simile; </font><font style="vertical-align: inherit;">con loro, il multiprocessing non ha alcun vantaggio sul threading. </font><font style="vertical-align: inherit;">Un altro esempio rilevante è </font></font><a href="sl=auto&amp;tl=it&amp;u=https://www.tensorflow.org/api_docs/python/tf/data/Dataset%23interleave"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Tensorflow</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> , che utilizza un pool di thread per trasformare i dati in parallelo.</font></font></p> 
+       <h3 id="usecasesformultiprocessing"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Casi d'uso per la multielaborazione</font></font></h3> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Il
+ multiprocessing eclissa il threading nei casi in cui il programma 
+richiede un uso intensivo della CPU e non deve eseguire alcuna IO o 
+interazione con l'utente. </font><font style="vertical-align: inherit;">Ad esempio, qualsiasi programma che si limita a sgranocchiare i numeri vedrà un enorme aumento di velocità dal multiprocessing; </font><font style="vertical-align: inherit;">infatti, il threading probabilmente lo rallenterà. </font><font style="vertical-align: inherit;">Un interessante esempio del mondo reale è </font></font><a href="sl=auto&amp;tl=it&amp;u=https://pytorch.org/docs/stable/data.html%23torch.utils.data.DataLoader"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Pytorch Dataloader</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> , che utilizza più sottoprocessi per caricare i dati nella GPU.</font></font></p> 
+       <h3 id="parallelizationinpythoninaction"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Parallelizzazione in Python, in Action</font></font></h3> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Python offre due librerie - </font></font><a href="sl=auto&amp;tl=it&amp;u=https://docs.python.org/3/library/multiprocessing.html"><code>multiprocessing</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">e </font></font><a href="sl=auto&amp;tl=it&amp;u=https://docs.python.org/3/library/threading.html"><code>threading</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">- per gli omonimi metodi di parallelizzazione. </font><font style="vertical-align: inherit;">Nonostante la differenza fondamentale tra loro, le due librerie offrono un'API molto simile (a partire da Python 3.7). </font><font style="vertical-align: inherit;">Vediamoli in azione.</font></font></p> 
+       <pre class=" language-python"><code class=" language-python"><span class="token keyword">import</span> threading
+<span class="token keyword">import</span> random
+<span class="token keyword">from</span> functools <span class="token keyword">import</span> reduce<font></font>
+<font></font>
+<font></font>
+<span class="token keyword">def</span> <span class="token function">func</span><span class="token punctuation">(</span>number<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    random_list <span class="token operator">=</span> random<span class="token punctuation">.</span>sample<span class="token punctuation">(</span>range<span class="token punctuation">(</span><span class="token number">1000000</span><span class="token punctuation">)</span><span class="token punctuation">,</span> number<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> reduce<span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">,</span> y<span class="token punctuation">:</span> x<span class="token operator">*</span>y<span class="token punctuation">,</span> random_list<span class="token punctuation">)</span><font></font>
+<font></font>
+    <font></font>
+number <span class="token operator">=</span> <span class="token number">50000</span>
+thread1 <span class="token operator">=</span> threading<span class="token punctuation">.</span>Thread<span class="token punctuation">(</span>target<span class="token operator">=</span>func<span class="token punctuation">,</span> args<span class="token operator">=</span><span class="token punctuation">(</span>number<span class="token punctuation">,</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+thread2 <span class="token operator">=</span> threading<span class="token punctuation">.</span>Thread<span class="token punctuation">(</span>target<span class="token operator">=</span>func<span class="token punctuation">,</span> args<span class="token operator">=</span><span class="token punctuation">(</span>number<span class="token punctuation">,</span><span class="token punctuation">)</span><span class="token punctuation">)</span><font></font>
+<font></font>
+thread1<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
+thread2<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span><font></font>
+<font></font>
+thread1<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
+thread2<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Puoi vedere che ho creato una funzione </font></font><code>func</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">che crea un elenco di numeri casuali e quindi moltiplica tutti gli elementi in sequenza. </font><font style="vertical-align: inherit;">Questo può essere un processo piuttosto pesante se il numero di elementi è abbastanza grande, diciamo 50k o 100k.</font></font></p> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" class="">Quindi, ho creato due thread che eseguiranno la stessa funzione. </font><font style="vertical-align: inherit;">Gli oggetti thread hanno un </font></font><code>start</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">metodo che avvia il thread in modo asincrono. </font><font style="vertical-align: inherit;">Se vogliamo aspettare che terminino e tornino, dobbiamo chiamare il </font></font><code>join</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">metodo, ed è quello che abbiamo fatto sopra.</font></font></p> 
+       <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Come puoi vedere, l'API per avviare un nuovo thread in un'attività in background è piuttosto semplice. </font><font style="vertical-align: inherit;">La cosa fantastica è che anche l'API per il multiprocessing è quasi la stessa; </font><font style="vertical-align: inherit;">controlliamolo.</font></font></p> 
+       <pre class=" language-python"><code class=" language-python"><span class="token keyword">import</span> multiprocessing
+<span class="token keyword">import</span> random
+<span class="token keyword">from</span> functools <span class="token keyword">import</span> reduce<font></font>
+<font></font>
+<font></font>
+<span class="token keyword">def</span> <span class="token function">func</span><span class="token punctuation">(</span>number<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    random_list <span class="token operator">=</span> random<span class="token punctuation">.</span>sample<span class="token punctuation">(</span>range<span class="token punctuation">(</span><span class="token number">1000000</span><span class="token punctuation">)</span><span class="token punctuation">,</span> number<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> reduce<span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">,</span> y<span class="token punctuation">:</span> x<span class="token operator">*</span>y<span class="token punctuation">,</span> random_list<span class="token punctuation">)</span><font></font>
+<font></font>
+    <font></font>
+number <span class="token operator">=</span> <span class="token number">50000</span>
+process1 <span class="token operator">=</span> multiprocessing<span class="token punctuation">.</span>Process<span class="token punctuation">(</span>target<span class="token operator">=</span>func<span class="token punctuation">,</span> args<span class="token operator">=</span><span class="token punctuation">(</span>number<span class="token punctuation">,</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+process2 <span class="token operator">=</span> multiprocessing<span class="token punctuation">.</span>Process<span class="token punctuation">(</span>target<span class="token operator">=</span>func<span class="token punctuation">,</span> args<span class="token operator">=</span><span class="token punctuation">(</span>number<span class="token punctuation">,</span><span class="token punctuation">)</span><span class="token punctuation">)</span><font></font>
+<font></font>
+process1<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
+process2<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span><font></font>
+<font></font>
+process1<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
+process2<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre> 
+       <p>There it is—just swap <code>threading.Thread</code> with <code>multiprocessing.Process</code> and you have the exact same program implemented using multiprocessing.</p> 
+       <p>There’s obviously a lot more you can do with this, but that’s 
+not within the scope of this article, so we won’t go into it here. Check
+ out the docs <a href="sl=auto&amp;tl=it&amp;u=https://docs.python.org/3/library/threading.html">here</a> and <a href="sl=auto&amp;tl=it&amp;u=https://docs.python.org/3/library/threading.html">here</a> if you’re interested in learning more.</p> 
+       <h3 id="benchmarks">Benchmarks</h3> 
+       <p>Now that we have an idea of how the code implementing 
+parallelization looks like, let’s get back to the performance issues. As
+ we’ve noted before, threading is not suitable for CPU bound tasks; in 
+those cases it ends up being a bottleneck. We can validate this using 
+some simple benchmarks.</p> 
+       <p>Firstly, let’s see how threading compares against 
+multiprocessing for the code sample I showed you above. Keep in mind 
+that this task does not involve any kind of IO, so it’s a pure CPU bound
+ task.</p> 
+       <p><img src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/Plot-1.png" alt="Trama-1" loading="lazy"></p> 
+       <p>And let’s see a similar benchmark for an IO bound task. For example, the following function —</p> 
+       <pre class=" language-python"><code class=" language-python"><span class="token keyword">import</span> requests<font></font>
+<font></font>
+<span class="token keyword">def</span> <span class="token function">func</span><span class="token punctuation">(</span>number<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    url <span class="token operator">=</span> <span class="token string">'http://example.com/'</span>
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> range<span class="token punctuation">(</span>number<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        response <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span>url<span class="token punctuation">)</span>
+        <span class="token keyword">with</span> open<span class="token punctuation">(</span><span class="token string">'example.com.txt'</span><span class="token punctuation">,</span> <span class="token string">'w'</span><span class="token punctuation">)</span> <span class="token keyword">as</span> output<span class="token punctuation">:</span>
+            output<span class="token punctuation">.</span>write<span class="token punctuation">(</span>response<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+</code></pre> 
+       <p>The function is simply fetching a webpage and saving that to a
+ local file, multiple times in a loop. Useless but straightforward and 
+thus a good fit for demonstration. Let’s look at the benchmark.</p> 
+       <p><img src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/Plot-3.png" alt="Trama-3" loading="lazy"></p> 
+       <p>Now there are a few things to note from these two charts:</p> 
+       <ul> 
+        <li> <p>In both cases, a single process took more execution time
+ than a single thread. Evidently, processes have more overhead than 
+threads.</p> </li> 
+        <li> <p>For the CPU bound task, multiple processes perform way 
+better than multiple threads. However, this difference becomes slightly 
+less prominent when we’re using 8x parallelization. As the processor in 
+my laptop is quad-core, up to four processes can use the multiple cores 
+effectively. So when I’m using more processes, it doesn’t scale that 
+well. But still, it outperforms threading by a lot because threading 
+can’t utilize the multiple cores at all.</p> </li> 
+        <li> <p>For the IO-bound task, the bottleneck is not CPU. So the
+ usual limitations due to GIL don’t apply here, and multiprocessing 
+doesn’t have an advantage. Not only that, the light overhead of threads 
+actually makes them faster than multiprocessing, and threading ends up 
+outperforming multiprocessing consistently.</p> </li> 
+       </ul> 
+       <h1 id="differencesmeritsanddrawbacks">Differences, Merits and Drawbacks</h1> 
+       <ul> 
+        <li> <p>Threads run in the same memory space; processes have separate memory.</p> </li> 
+        <li> <p>Following from the previous point: sharing objects 
+between threads is easier, but the flip side of the coin is that you 
+have to take extra measure for object synchronization to make sure that 
+two threads don’t write to the same object at the same time and that a 
+race condition does not occur.</p> </li> 
+        <li> <p>Because of the added programming overhead of object 
+synchronization, multi-threaded programming is more bug-prone. On the 
+other hand, multi-processes programming is easy to get right.</p> </li> 
+        <li> <p>Threads have a lower overhead compared to processes; spawning processes take more time than threads.</p> </li> 
+        <li> <p>Due to limitations put in place by the GIL in Python, threads can’t achieve <em>true</em> parallelism utilizing multiple CPU cores. Multiprocessing does not have any such restrictions.</p> </li> 
+        <li> <p>Process <a href="sl=auto&amp;tl=it&amp;u=https://en.wikipedia.org/wiki/Scheduling_(computing)">scheduling</a> is handled by the OS, whereas thread scheduling is done by the Python interpreter.</p> </li> 
+        <li> <p>Child processes are interruptible and killable, whereas child threads are not. You have to wait for the threads to terminate or <code>join</code>.</p> </li> 
+       </ul> 
+       <p>From all this discussion, we can conclude the following —</p> 
+       <ul> 
+        <li> <p>Threading should be used for programs involving IO or user interaction.</p> </li> 
+        <li> <p>Multiprocessing should be used for CPU bound, computation-intensive programs.</p> </li> 
+       </ul> 
+       <h1 id="fromtheperspectiveofadatascientist">From the Perspective of a Data Scientist</h1> 
+       <p>A typical data processing pipeline can be divided into the following steps:</p> 
+       <ol> 
+        <li>Reading raw data and storing into main memory or GPU</li> 
+        <li>Doing computation, using either CPU or GPU</li> 
+        <li>Storing the mined information in a database or disk.</li> 
+       </ol> 
+       <p>Let’s explore how we could introduce parallelism in these tasks so that they can be sped up.</p> 
+       <p>Step 1 involves reading data from disk, so clearly disk IO is 
+going to be the bottleneck for this step. As we’ve discussed, threads 
+are the best option for parallelizing this kind of operation. Similarly,
+ step 3 is also an ideal candidate for the introduction of threading.</p> 
+       <p>However, step 2 consists of computations that involve the CPU 
+or a GPU. If it’s a CPU based task, using threading will be of no use; 
+instead, we have to go for multiprocessing. Only then we’ll be able to 
+exploit the multiple cores of the CPU and achieve parallelism. If it’s a
+ GPU based task, since GPU already implements a massively parallelized 
+architecture at the hardware level, using the correct interface 
+(libraries and drivers) to interact with the GPU should take care of the
+ rest.</p> 
+       <p><img src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/mutli-t-nd-mutli-p.png" alt="mutli-t-nd-mutli-p" loading="lazy"></p> 
+       <p>Now you may be thinking, “My data pipeline looks a bit 
+different to this; I have some tasks that don’t really fit into this 
+general framework.” Still, you should be able to observe the methodology
+ used here to decide between threading and multiprocessing. The factors 
+you should consider are:</p> 
+       <ul> 
+        <li>Whether your task has any form of IO</li> 
+        <li>Whether IO is the bottleneck of your program</li> 
+        <li>Whether your task depends upon a large amount of computation by the CPU</li> 
+       </ul> 
+       <p>With these factors in mind, together with the takeaways above,
+ you should be able to make the decision. Also, keep in mind that you 
+don’t have to use a single form of parallelism throughout your program. 
+You should use one or the other for different parts of your program, 
+whichever is suitable for that particular part.</p> 
+       <p>Now we’ll look at two example scenarios a data scientist might face and how you can use parallel computing to speed them up.</p> 
+       <h2 id="scenariodownloadingemails">Scenario: Downloading Emails</h2> 
+       <p>Let’s say you want to analyze all the emails in the inbox of 
+your own home-grown startup and understand the trends: who are the most 
+frequent senders, what are the most common keywords appearing in the 
+emails, which day of the week or which hour of the day do you receive 
+most emails, and so on. The first step of this project would be, of 
+course, downloading the emails to your computer.</p> 
+       <p>At first, let’s do it sequentially without using any 
+parallelization. The code to use is below and it should be pretty 
+self-explanatory. There is a function <code>download_emails</code> which
+ takes a list of email ids as input and downloads them sequentially. 
+This calls this function with a list of ids of 100 email at once.</p> 
+       <pre class=" language-python"><code class=" language-python"><span class="token keyword">import</span> imaplib
+<span class="token keyword">import</span> time<font></font>
+<font></font>
+IMAP_SERVER <span class="token operator">=</span> <span class="token string">'imap.gmail.com'</span>
+USERNAME <span class="token operator">=</span> <span class="token string">'username@gmail.com'</span>
+PASSWORD <span class="token operator">=</span> <span class="token string">'password'</span><font></font>
+<font></font>
+<span class="token keyword">def</span> <span class="token function">download_emails</span><span class="token punctuation">(</span>ids<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    client <span class="token operator">=</span> imaplib<span class="token punctuation">.</span>IMAP4_SSL<span class="token punctuation">(</span>IMAP_SERVER<span class="token punctuation">)</span>
+    client<span class="token punctuation">.</span>login<span class="token punctuation">(</span>USERNAME<span class="token punctuation">,</span> PASSWORD<span class="token punctuation">)</span>
+    client<span class="token punctuation">.</span>select<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> ids<span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span>f<span class="token string">'Downloading mail id: {i.decode()}'</span><span class="token punctuation">)</span>
+        _<span class="token punctuation">,</span> data <span class="token operator">=</span> client<span class="token punctuation">.</span>fetch<span class="token punctuation">(</span>i<span class="token punctuation">,</span> <span class="token string">'(RFC822)'</span><span class="token punctuation">)</span>
+        <span class="token keyword">with</span> open<span class="token punctuation">(</span>f<span class="token string">'emails/{i.decode()}.eml'</span><span class="token punctuation">,</span> <span class="token string">'wb'</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+            f<span class="token punctuation">.</span>write<span class="token punctuation">(</span>data<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    client<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>f<span class="token string">'Downloaded {len(ids)} mails!'</span><span class="token punctuation">)</span><font></font>
+    <font></font>
+start <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><font></font>
+<font></font>
+client <span class="token operator">=</span> imaplib<span class="token punctuation">.</span>IMAP4_SSL<span class="token punctuation">(</span>IMAP_SERVER<span class="token punctuation">)</span>
+client<span class="token punctuation">.</span>login<span class="token punctuation">(</span>USERNAME<span class="token punctuation">,</span> PASSWORD<span class="token punctuation">)</span>
+client<span class="token punctuation">.</span>select<span class="token punctuation">(</span><span class="token punctuation">)</span>
+_<span class="token punctuation">,</span> ids <span class="token operator">=</span> client<span class="token punctuation">.</span>search<span class="token punctuation">(</span>None<span class="token punctuation">,</span> <span class="token string">'ALL'</span><span class="token punctuation">)</span>
+ids <span class="token operator">=</span> ids<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token punctuation">)</span>
+ids <span class="token operator">=</span> ids<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token number">100</span><span class="token punctuation">]</span>
+client<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span><font></font>
+<font></font>
+download_emails<span class="token punctuation">(</span>ids<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'Time:'</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> start<span class="token punctuation">)</span>
+</code></pre> 
+       <p>Time taken :: <code>35.65300488471985</code> seconds.</p> 
+       <p>Now let’s introduce some parallelizability into this task to 
+speed things up. Before we dive into writing the code, we have to decide
+ between threading and multiprocessing. As you’ve learned so far, 
+threads are the best option when it comes to tasks that have some IO as 
+the bottleneck. The task at hand obviously belongs to this category, as 
+it is accessing an IMAP server over the internet. So we’ll be going with
+ <code>threading.</code></p> 
+       <p>Much of the code we’re going to use is going to be the same as
+ the one we used in the sequential case. The only difference is that we 
+will split the list of 100 email ids into 10 smaller chunks, each chunk 
+containing 10 ids, then create 10 threads and call the <code>download_emails</code> function with a different chunk from each of them. I’m using the <code>concurrent.futures.ThreadPoolExecutor</code> class from the Python standard library for threading.</p> 
+       <pre class=" language-python"><code class=" language-python"><span class="token keyword">import</span> imaplib
+<span class="token keyword">import</span> time
+<span class="token keyword">from</span> concurrent<span class="token punctuation">.</span>futures <span class="token keyword">import</span> ThreadPoolExecutor<font></font>
+<font></font>
+IMAP_SERVER <span class="token operator">=</span> <span class="token string">'imap.gmail.com'</span>
+USERNAME <span class="token operator">=</span> <span class="token string">'username@gmail.com'</span>
+PASSWORD <span class="token operator">=</span> <span class="token string">'password'</span><font></font>
+<font></font>
+<span class="token keyword">def</span> <span class="token function">download_emails</span><span class="token punctuation">(</span>ids<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    client <span class="token operator">=</span> imaplib<span class="token punctuation">.</span>IMAP4_SSL<span class="token punctuation">(</span>IMAP_SERVER<span class="token punctuation">)</span>
+    client<span class="token punctuation">.</span>login<span class="token punctuation">(</span>USERNAME<span class="token punctuation">,</span> PASSWORD<span class="token punctuation">)</span>
+    client<span class="token punctuation">.</span>select<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> ids<span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span>f<span class="token string">'Downloading mail id: {i.decode()}'</span><span class="token punctuation">)</span>
+        _<span class="token punctuation">,</span> data <span class="token operator">=</span> client<span class="token punctuation">.</span>fetch<span class="token punctuation">(</span>i<span class="token punctuation">,</span> <span class="token string">'(RFC822)'</span><span class="token punctuation">)</span>
+        <span class="token keyword">with</span> open<span class="token punctuation">(</span>f<span class="token string">'emails/{i.decode()}.eml'</span><span class="token punctuation">,</span> <span class="token string">'wb'</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+            f<span class="token punctuation">.</span>write<span class="token punctuation">(</span>data<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    client<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>f<span class="token string">'Downloaded {len(ids)} mails!'</span><span class="token punctuation">)</span><font></font>
+    <font></font>
+start <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><font></font>
+<font></font>
+client <span class="token operator">=</span> imaplib<span class="token punctuation">.</span>IMAP4_SSL<span class="token punctuation">(</span>IMAP_SERVER<span class="token punctuation">)</span>
+client<span class="token punctuation">.</span>login<span class="token punctuation">(</span>USERNAME<span class="token punctuation">,</span> PASSWORD<span class="token punctuation">)</span>
+client<span class="token punctuation">.</span>select<span class="token punctuation">(</span><span class="token punctuation">)</span>
+_<span class="token punctuation">,</span> ids <span class="token operator">=</span> client<span class="token punctuation">.</span>search<span class="token punctuation">(</span>None<span class="token punctuation">,</span> <span class="token string">'ALL'</span><span class="token punctuation">)</span>
+ids <span class="token operator">=</span> ids<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token punctuation">)</span>
+ids <span class="token operator">=</span> ids<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token number">100</span><span class="token punctuation">]</span>
+client<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span><font></font>
+<font></font>
+number_of_chunks <span class="token operator">=</span> <span class="token number">10</span>
+chunk_size <span class="token operator">=</span> <span class="token number">10</span>
+executor <span class="token operator">=</span> ThreadPoolExecutor<span class="token punctuation">(</span>max_workers<span class="token operator">=</span>number_of_chunks<span class="token punctuation">)</span>
+futures <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> range<span class="token punctuation">(</span>number_of_chunks<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    chunk <span class="token operator">=</span> ids<span class="token punctuation">[</span>i<span class="token operator">*</span>chunk_size<span class="token punctuation">:</span><span class="token punctuation">(</span>i<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token operator">*</span>chunk_size<span class="token punctuation">]</span>
+    futures<span class="token punctuation">.</span>append<span class="token punctuation">(</span>executor<span class="token punctuation">.</span>submit<span class="token punctuation">(</span>download_emails<span class="token punctuation">,</span> chunk<span class="token punctuation">)</span><span class="token punctuation">)</span><font></font>
+<font></font>
+<span class="token keyword">for</span> future <span class="token keyword">in</span> concurrent<span class="token punctuation">.</span>futures<span class="token punctuation">.</span>as_completed<span class="token punctuation">(</span>futures<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">pass</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'Time:'</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> start<span class="token punctuation">)</span>
+</code></pre> 
+       <p>Time taken :: <code>9.841094255447388</code> seconds.</p> 
+       <p>As you can see, threading, sped it up considerably.</p> 
+       <h2 id="scenarioclassificationusingscikitlearn">Scenario: Classification Using Scikit-Learn</h2> 
+       <p>Let’s say you have a classification problem, and you want to use a <em>random forest</em> classifier for this. As it’s a standard and well-known machine learning algorithm, let’s not <a href="sl=auto&amp;tl=it&amp;u=https://en.wikipedia.org/wiki/Reinventing_the_wheel">reinvent the wheel</a> and just use <code>sklearn.ensemble.RandomForestClassifier</code>.</p> 
+       <p>The below code serves demonstration purposes. I have created a classification dataset using the helper function <code>sklearn.datasets.make_classification</code>, then trained a <code>RandomForestClassifier</code> on that. Also, I’m timing the part of the code that does the core work of fitting the model.</p> 
+       <pre class=" language-python"><code class=" language-python"><span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>ensemble <span class="token keyword">import</span> RandomForestClassifier
+<span class="token keyword">from</span> sklearn <span class="token keyword">import</span> datasets
+<span class="token keyword">import</span> time<font></font>
+<font></font>
+X<span class="token punctuation">,</span> y <span class="token operator">=</span> datasets<span class="token punctuation">.</span>make_classification<span class="token punctuation">(</span>n_samples<span class="token operator">=</span><span class="token number">10000</span><span class="token punctuation">,</span> n_features<span class="token operator">=</span><span class="token number">50</span><span class="token punctuation">,</span> n_informative<span class="token operator">=</span><span class="token number">20</span><span class="token punctuation">,</span> n_classes<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">)</span><font></font>
+<font></font>
+start <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
+model <span class="token operator">=</span> RandomForestClassifier<span class="token punctuation">(</span>n_estimators<span class="token operator">=</span><span class="token number">500</span><span class="token punctuation">)</span>
+model<span class="token punctuation">.</span>fit<span class="token punctuation">(</span>X<span class="token punctuation">,</span> y<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'Time:'</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>start<span class="token punctuation">)</span><font></font>
+<font></font>
+</code></pre> 
+       <p>Time taken :: <code>34.17733192443848</code> seconds.</p> 
+       <p>Now we’ll look into how we can reduce the running time of this
+ algorithm. We know that this algorithm can be parallelized to some 
+extent, but what kind of parallelization would be suitable? It does not 
+have any IO bottleneck; on the contrary, it’s a very CPU intensive task.
+ So multiprocessing would be the logical choice.</p> 
+       <p>Fortunately, <code>sklearn</code> has already implemented 
+multiprocessing into this algorithm and we won’t have to write it from 
+scratch. As you can see in the code below, we just have to provide a 
+parameter <code>n_jobs</code>—the number of processes it should use—to enable multiprocessing.</p> 
+       <pre class=" language-python"><code class=" language-python"><span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>ensemble <span class="token keyword">import</span> RandomForestClassifier
+<span class="token keyword">from</span> sklearn <span class="token keyword">import</span> datasets
+<span class="token keyword">import</span> time<font></font>
+<font></font>
+X<span class="token punctuation">,</span> y <span class="token operator">=</span> datasets<span class="token punctuation">.</span>make_classification<span class="token punctuation">(</span>n_samples<span class="token operator">=</span><span class="token number">10000</span><span class="token punctuation">,</span> n_features<span class="token operator">=</span><span class="token number">50</span><span class="token punctuation">,</span> n_informative<span class="token operator">=</span><span class="token number">20</span><span class="token punctuation">,</span> n_classes<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">)</span><font></font>
+<font></font>
+start <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
+model <span class="token operator">=</span> RandomForestClassifier<span class="token punctuation">(</span>n_estimators<span class="token operator">=</span><span class="token number">500</span><span class="token punctuation">,</span> n_jobs<span class="token operator">=</span><span class="token number">4</span><span class="token punctuation">)</span>
+model<span class="token punctuation">.</span>fit<span class="token punctuation">(</span>X<span class="token punctuation">,</span> y<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'Time:'</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>start<span class="token punctuation">)</span>
+</code></pre> 
+       <p>Time taken :: <code>14.576200723648071</code> seconds.</p> 
+       <p>As expected, multiprocessing made it quite a bit faster.</p> 
+       <h1 id="conclusion">Conclusion</h1> 
+       <p>Most if not all data science projects will see a massive 
+increase in speed with parallel computing. In fact, many of the popular 
+data science libraries already have parallelism built into them, <em>you just have to enable it</em>.
+ So before trying to implement it on your own, look through the 
+documentation of the library you’re using and check if it supports 
+parallelism (by the way, I definitively recommend you to check out <a href="sl=auto&amp;tl=it&amp;u=https://dask.org/">dask</a>). In case it doesn’t, this article should assist you in implementing it on your own.</p> 
+       <!--kg-card-end: markdown-->
+       <!--kg-card-begin: html-->
+       <div id="fh-banner"> 
+        <h3 id="fh-banner-main-text">Ready to build, train, and deploy AI?</h3> 
+        <h4 id="fh-banner-sub-text">Get started with FloydHub's collaborative AI platform for free</h4> 
+        <a href="sl=auto&amp;tl=it&amp;u=https://www.floydhub.com/?utm_source%3Dblog%26utm_medium%3Dbanner-multi-threading-vs-multi-processing-ds%26utm_campaign%3Dtry_floydhub_for_free" target="_blank" rel="noopener noreferrer" id="fh-banner-button-link"> <h6 id="fh-banner-button-link-text">Try FloydHub for free</h6> </a> 
+       </div>
+       <!--kg-card-end: html-->
+       <hr>
+       <!--kg-card-begin: markdown-->
+       <h1 id="abouttheauthor">About the Author</h1> 
+       <p>Sumit is a computer enthusiast who started programming at an 
+early age; he's currently finishing his master's degree in computer 
+science at IIT Delhi. Whenever he isn't programming, you can probably 
+find him either reading philosophy, playing the guitar, taking photos, 
+or blogging. You can connect with Sumit on <a href="sl=auto&amp;tl=it&amp;u=https://twitter.com/SkullTech101">Twitter</a>, <a href="sl=auto&amp;tl=it&amp;u=https://www.linkedin.com/in/sumit-ghosh101">LinkedIn</a>, <a href="sl=auto&amp;tl=it&amp;u=https://github.com/SkullTech">Github</a>, and <a href="sl=auto&amp;tl=it&amp;u=https://sumit-ghosh.com/">his website</a>.</p> 
+       <!--kg-card-end: markdown--> 
+      </section> 
+     </article> 
+    </main> 
+    <section class="footer-cta "> 
+     <div class="inner"> 
+      <h2>Sign up for more like this.</h2> 
+      <a class="footer-cta-button gh-portal-close" href="https://blog-floydhub-com.translate.goog/multiprocessing-vs-threading-in-python-what-every-data-scientist-needs-to-know/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it#/portal" data-portal=""> 
+       <div class="footer-cta-input">
+        Enter your email
+       </div> <span>Subscribe</span> </a> 
+     </div> 
+    </section> 
+    <aside class="read-more-wrap"> 
+     <div class="read-more inner"> 
+      <article class="post-card post featured "> 
+       <a class="post-card-image-link" href="https://blog-floydhub-com.translate.goog/floydhub-has-shut-down/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it"> <img class="post-card-image" srcset="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/website.jpg 300w" sizes="(max-width: 1000px) 400px, 800px" src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/photo-1495616811223-4d98c6e9c869.jpg" alt="FloydHub has shut down" loading="lazy"> </a> 
+       <div class="post-card-content"> 
+        <a class="post-card-content-link" href="https://blog-floydhub-com.translate.goog/floydhub-has-shut-down/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it"> 
+         <header class="post-card-header"> 
+          <h2 class="post-card-title">FloydHub has shut down</h2> 
+         </header> 
+         <div class="post-card-excerpt"> 
+          <p>FloydHub - our ML platform used by thousands of Data Scientists and AI enthusiasts was shut down on August 20, 2021.</p> 
+         </div> </a> 
+        <footer class="post-card-meta"> 
+         <ul class="author-list"> 
+          <li class="author-list-item"> <a href="https://blog-floydhub-com.translate.goog/author/naren/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it" class="static-avatar"> <img class="author-profile-image" src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/a840d8aed420a05d642136f0750967c6.jpg" alt="Naren Thiagarajan" loading="lazy"> </a> </li> 
+         </ul> 
+         <div class="post-card-byline-content"> 
+          <span><a href="https://blog-floydhub-com.translate.goog/author/naren/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it">Naren Thiagarajan</a></span> 
+          <span class="post-card-byline-date"><time datetime="2021-08-21">Aug 21, 2021</time> <span class="bull">•</span> 1 min read</span> 
+         </div> 
+        </footer> 
+       </div> 
+      </article> 
+      <article class="post-card post "> 
+       <a class="post-card-image-link" href="https://blog-floydhub-com.translate.goog/nlp-datasets-how-to-train-and-evaluate-your-deep-learning-model/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it"> <img class="post-card-image" srcset="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/nlp-dataset_002.jpg 300w" sizes="(max-width: 1000px) 400px, 800px" src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/nlp-dataset.jpg" alt="NLP Datasets: How good is your deep learning model?" loading="lazy"> </a> 
+       <div class="post-card-content"> 
+        <a class="post-card-content-link" href="https://blog-floydhub-com.translate.goog/nlp-datasets-how-to-train-and-evaluate-your-deep-learning-model/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it"> 
+         <header class="post-card-header"> 
+          <h2 class="post-card-title">NLP Datasets: How good is your deep learning model?</h2> 
+         </header> 
+         <div class="post-card-excerpt"> 
+          <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Con
+ il rapido progresso dei modelli di PNL, abbiamo superato la capacità di
+ misurare quanto sono bravi nelle attività linguistiche a livello umano.
+ </font><font style="vertical-align: inherit;">Abbiamo bisogno di set di
+ dati NLP migliori ora più che mai per valutare l'efficacia di questi 
+modelli e per essere in grado di modificarli per i nostri domini 
+aziendali.</font></font></p> 
+         </div> </a> 
+        <footer class="post-card-meta"> 
+         <ul class="author-list"> 
+          <li class="author-list-item"> <a href="https://blog-floydhub-com.translate.goog/author/cathal/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it" class="static-avatar"> <img class="author-profile-image" src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/profile_pic_lh.png" alt="Cathal Horan" loading="lazy"> </a> </li> 
+         </ul> 
+         <div class="post-card-byline-content"> 
+          <span><a href="https://blog-floydhub-com.translate.goog/author/cathal/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Catal Horan</font></font></a></span> 
+          <span class="post-card-byline-date"><time datetime="2020-06-10"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">10 giugno 2020</font></font></time> <span class="bull"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">•</font></font></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> 31 minuti di lettura</font></font></span> 
+         </div> 
+        </footer> 
+       </div> 
+      </article> 
+      <article class="post-card post "> 
+       <a class="post-card-image-link" href="https://blog-floydhub-com.translate.goog/the-future-of-ai-is-open/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it"> <img class="post-card-image" srcset="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/han-hofml_002.png 300w" sizes="(max-width: 1000px) 400px, 800px" src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/han-hofml.png" alt="The Future of AI is Open" loading="lazy"> </a> 
+       <div class="post-card-content"> 
+        <a class="post-card-content-link" href="https://blog-floydhub-com.translate.goog/the-future-of-ai-is-open/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it"> 
+         <header class="post-card-header"> 
+          <h2 class="post-card-title"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Il futuro dell'IA è aperto</font></font></h2> 
+         </header> 
+         <div class="post-card-excerpt"> 
+          <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Questa
+ intervista a Humans of ML con Han Xiao copre l'etica dell'IA, 
+l'imprenditorialità open source, come la scrittura ha reso Han un 
+programmatore migliore e altro ancora.</font></font></p> 
+         </div> </a> 
+        <footer class="post-card-meta"> 
+         <ul class="author-list"> 
+          <li class="author-list-item"> <a href="https://blog-floydhub-com.translate.goog/author/alessio/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it" class="static-avatar"> <img class="author-profile-image" src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/alessio.jpg" alt="Alessio Gozzoli" loading="lazy"> </a> </li> 
+         </ul> 
+         <div class="post-card-byline-content"> 
+          <span><a href="https://blog-floydhub-com.translate.goog/author/alessio/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Alessio Gozzoli</font></font></a></span> 
+          <span class="post-card-byline-date"><time datetime="2020-06-02"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2 giugno 2020</font></font></time> <span class="bull"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">•</font></font></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> 18 minuti di lettura</font></font></span> 
+         </div> 
+        </footer> 
+       </div> 
+      </article> 
+     </div> 
+    </aside> 
+   </div> 
+   <footer class="site-footer outer"> 
+    <div class="inner"> 
+     <section class="copyright">
+      <a href="https://blog-floydhub-com.translate.goog/multiprocessing-vs-threading-in-python-what-every-data-scientist-needs-to-know/?_x_tr_sl=auto&amp;_x_tr_tl=it&amp;_x_tr_hl=it"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Blog FloydHub</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> © 2022
+     </font></font></section> 
+     <nav class="site-footer-nav"> 
+     </nav> 
+     <div>
+      <a href="sl=auto&amp;tl=it&amp;u=https://ghost.org/" target="_blank" rel="noopener"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Alimentato da Ghost</font></font></a>
+     </div> 
+    </div> 
+   </footer> 
+  </div> 
+  <script src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/jquery-3.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous">
+</script> 
+  <script src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/casper.js"></script> 
+  <script>
+$(document).ready(function () {
+    // Mobile Menu Trigger
+    $('.gh-burger').click(function () {
+        $('body').toggleClass('gh-head-open');
+    });
+    // FitVids - Makes video embeds responsive
+    $(".gh-content").fitVids();
+});
+</script> 
+  <style>
+    .signupBtnScroll {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 60px;
+        background: #000;
+        z-index: 1000;
+}
+    .signupBtnScroll p {
+        color: #d6d6d6; 
+        font-size: 18px; 
+        margin-bottom: 13px; 
+        z-index: 2000;
+    }
+    .button-signup {
+        background: linear-gradient(#4fb7f0,#29a0e0 60%,#29a0e0 90%,#36a6e2); /*#2196F3;*/
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif; 
+        font-size: .9em; 
+        color: #fff;  
+        white-space: nowrap; 
+        height: 44px; 
+        padding: 0 23px; 
+        -webkit-box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
+        box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08); 
+        border-radius: 4px; font-weight: 600;  
+        letter-spacing: .025em; 
+        text-decoration: none; 
+        text-transform: uppercase;
+        width: auto;
+    }
+    #centeredButton { 
+        /*width:247px;*/
+        width:650px;
+        margin:0 auto; 
+        margin-top: 8px;
+        padding-right: 7px;
+        display: flex;
+		-ms-flex-wrap: wrap;
+		flex-wrap: wrap;
+		-ms-flex-pack: justify;
+		justify-content: space-between;
+		-ms-flex-align: center;
+        align-items: center;
+        overflow-y:scroll;
+    }
+    .button-signup:hover {
+        background: linear-gradient(#4194f2,#3687e3 60%,#3687e3 90%,#328aed);
+    }
+    
+    .site-footer-content .inner {
+        z-index: 2000;
+    }        
+    .site-footer-content .inner { /* footer cleanup */ 
+    	width: 100px;
+    	margin: 0 auto;        
+    } 
+    .site-footer-content {
+    	justify-content: center;
+    	max-width: 298px;
+    }
+    section.copyright {
+        opacity: .75;
+    }
+    p.tryFH {
+     	margin-bottom: 6px; 
+        margin-top: 4px; 
+        font-size: 20px;
+        }
+</style> 
+  <div id="goog-gt-tt" class="VIpgJd-suEOdc skiptranslate" dir="ltr" style="visibility: hidden; left: 687px; top: 8737px; display: none;"><div style="padding: 8px;"><div><div class="logo"><img src="Multiprocessing%20vs.%20Threading%20in%20Python%20What%20Every%20Data%20Scientist%20Needs%20to%20Know_files/translate_24dp.png" alt="Google Traduttore" width="20" height="20"></div></div></div><div class="top" style="padding: 8px; float: left; width: 100%;"><h1 class="title gray">Testo originale</h1></div><div class="middle" style="padding: 8px;"><div class="original-text">Then, I've created two threads that will execute the same function.</div></div><div class="bottom" style="padding: 8px;"><div class="activity-links"><span class="activity-link">Contribuisci a una traduzione migliore</span><span class="activity-link"></span></div><div class="started-activity-container"><hr style="color: #CCC; background-color: #CCC; height: 1px; border: none;"><div class="activity-root"></div></div></div><div class="status-message" style="display: none; opacity: 0;"></div></div>
+ 
+<div class="goog-te-spinner-pos"><div class="goog-te-spinner-animation"><svg xmlns="http://www.w3.org/2000/svg" class="goog-te-spinner" width="96px" height="96px" viewBox="0 0 66 66"><circle class="goog-te-spinner-path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle></svg></div></div><div id="ghost-portal-root"></div></body></html>
