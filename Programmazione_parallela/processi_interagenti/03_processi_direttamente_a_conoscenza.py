@@ -5,15 +5,11 @@ o altri meccanismi di comunicazione.
 Ad esempio, uno scenario di scambio di dati tra server e client 
 o tra processi all'interno di un'applicazione che utilizza canali di comunicazione diretti.
 """
-import os
-import multiprocessing
-from multiprocessing import Process, Pipe
+import os # il modulo fornisce funzionalità per interagire con il sistema operativo
+from multiprocessing import Process,current_process, Pipe
 
 def process_id():
-    print("Server PID: %s, Process Name: %s " % (
-        os.getpid(),
-        multiprocessing.current_process().name)
-    )
+    print(f"Server PID: {os.getpid()}, Process Name: { current_process().name}, Process PID: { current_process().pid}")
            
 def process_function(conn):
     process_id()
@@ -30,24 +26,18 @@ if __name__ == "__main__":
     # Creazione di una connessione Pipe per la comunicazione bidirezionale tra processi
     # restituisce due oggetti di connessione
     parent_conn, child_conn = Pipe()
-
     # Dato da inviare al processo figlio
     data = 5
-
     # Creazione di un nuovo processo, che sarà il figlio
     p = Process(target=process_function, args=(child_conn,))
     p.start()
-
     # Invio dei dati al processo figlio attraverso la connessione
     parent_conn.send(data)
-
     # Ricezione del risultato dal processo figlio
     result = parent_conn.recv()
-
     # Attendi il completamento del processo figlio
     p.join()
     process_id()
     print("Stampo il risultato ricevuto")
-    
     # Stampa del risultato
     print(result)
