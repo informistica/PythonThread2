@@ -11,6 +11,7 @@ condividono una struttura dati (la coda) per scambiare informazioni.
 from multiprocessing import Process, Queue
 import os
 import multiprocessing
+
 def process_id():
     print("Server PID: %s, Process Name: %s " % (
         os.getpid(),
@@ -23,6 +24,7 @@ def process_function(data, result_queue):
     print("Elabora ",data)
     # Operazioni che producono un risultato
     result = data * 2
+    print("Inserisco in coda", result)
     result_queue.put(result)
 
 if __name__ == "__main__":
@@ -40,5 +42,6 @@ if __name__ == "__main__":
 
     while not result_queue.empty():
         result = result_queue.get()
+        print("Prelevo dalla coda:")
         print(result)
         
