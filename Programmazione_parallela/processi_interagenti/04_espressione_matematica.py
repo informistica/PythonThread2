@@ -33,4 +33,4 @@ if __name__ == "__main__":
     final_result = (partial_result1*partial_result2*partial_result3)/2
 
     # Stampa il risultato finale
-    print("Il risultato final       e è:", final_result)
+    print("Il risultato finale è:", final_result)
