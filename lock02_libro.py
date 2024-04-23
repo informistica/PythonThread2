@@ -11,20 +11,17 @@ imprevisto di counter.
 import threading
 import time
 from random import randint
-tanti = 10
 
 def scarica():
     global tanti
     totS = tanti - 3
     time.sleep(randint(0,1))
     tanti = totS
-
 def carica():
     global tanti
     totC = tanti + 5
     time.sleep(randint(0,1))
     tanti = totC
-
 if __name__ == "__main__":
     thread1 = threading.Thread(target=carica)
     thread2 = threading.Thread(target=scarica)
