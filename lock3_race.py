@@ -9,16 +9,20 @@ e decremento, si verifica una race condition che può portare a un valore finale
 imprevisto di counter.
 """
 import threading
+import time
+from random import randint
 counter = 0
 
 def increment():
     global counter
-    for _ in range(1000000):
+    time.sleep(randint(0,1))
+    for _ in range(10):
+        
         counter += 1
 
 def decrement():
     global counter
-    for _ in range(1000000):
+    for _ in range(10):
         counter -= 1
 
 if __name__ == "__main__":
