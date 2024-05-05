@@ -38,6 +38,7 @@ def consumer(consumer_id):
         print(f"Consumatore {consumer_id} tenta di acquisire la risorsa...")
         # Preleva un dato dal buffer
         data = buffer.get()
+        #data = buffer.get(block=False) #vedi esempio successivo _02
         # Rilascia il semaforo del buffer
         buffer_semaphore.release()
         print(f"Consumatore {consumer_id} ha consumato il dato {data} e rilasciato il semaforo [num elem nella  coda {buffer.qsize()}]-> [{list(buffer.queue)}]")
