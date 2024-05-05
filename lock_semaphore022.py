@@ -6,10 +6,13 @@ import random
 # Creazione di una coda con dimensione massima di 3 elementi
 buffer = queue.Queue(maxsize=3)
 
+# Semaforo per controllare l'accesso al buffer
+buffer_semaphore = threading.Semaphore(1)
 # Funzione per inserire elementi nella coda
 def producer():
     for i in range(5):
         print(f"Produttore sta cercando di inserire {i} nella coda...")
+        buffer_semaphore.acquire()
         try:
             buffer.put(i, block=True, timeout=2)  # Inserimento con timeout di 2 secondi
             print(f"Produttore ha inserito {i} nella coda.")
@@ -18,14 +21,14 @@ def producer():
             # Attendi un po' prima di produrre un altro dato
             time.sleep(random.uniform(0.5, 1.5))
         finally:
-            print("ciao")
-            pass
+            buffer_semaphore.release()
 
 # Funzione per rimuovere elementi dalla coda
 def consumer():
     while True:
         time.sleep(1)  # Attendi un secondo
         print("Consumatore sta cercando di prelevare un elemento dalla coda...")
+        buffer_semaphore.acquire()
         try:
             item = buffer.get(block=True, timeout=2)  # Rimozione con timeout di 2 secondi
             print(f"Consumatore ha prelevato {item} dalla coda. [num elem nella  coda {buffer.qsize()}]")
@@ -34,9 +37,7 @@ def consumer():
             # Attendi un po' prima di consumare un altro dato
             time.sleep(random.uniform(0.5, 1.5))
         finally:
-            print("ciao2")
-            pass
-            #break
+            buffer_semaphore.release()
 
 # Creazione dei thread per il produttore e il consumatore
 producer_thread = threading.Thread(target=producer)
