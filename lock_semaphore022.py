@@ -17,6 +17,9 @@ def producer():
             print("La coda è piena, impossibile inserire. Saltando l'inserimento.")
             # Attendi un po' prima di produrre un altro dato
             time.sleep(random.uniform(0.5, 1.5))
+        finally:
+            print("ciao")
+            pass
 
 # Funzione per rimuovere elementi dalla coda
 def consumer():
@@ -30,6 +33,10 @@ def consumer():
             print("La coda è vuota, impossibile prelevare.")
             # Attendi un po' prima di consumare un altro dato
             time.sleep(random.uniform(0.5, 1.5))
+        finally:
+            print("ciao2")
+            pass
+            #break
 
 # Creazione dei thread per il produttore e il consumatore
 producer_thread = threading.Thread(target=producer)
