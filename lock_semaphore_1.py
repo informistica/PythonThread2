@@ -9,33 +9,25 @@ import random
 
 # Definizione di un semaforo con un valore iniziale di 5
 semaphore = threading.Semaphore(5)
-
 # Pool di risorse condivise
 resource_pool = ["Risorsa 1", "Risorsa 2", "Risorsa 3", "Risorsa 4", "Risorsa 5"]
-
 # Funzione per l'accesso alle risorse
 def access_resource(thread_id):
     while True:
         # Acquisizione del semaforo
         semaphore.acquire()
-        
-        # Estrazione di una risorsa casuale dal pool
+        #Estrazione di una risorsa casuale dal pool
         resource = random.choice(resource_pool)
         resource_pool.remove(resource)
-        
         print(f"Thread {thread_id} ha ottenuto l'accesso alla {resource}.")
         time.sleep(2)  # Simulazione di lavoro sulla risorsa
         print(f"Thread {thread_id} sta rilasciando la {resource}.")
-        
         # Rilascio del semaforo
         semaphore.release()
-        
         # Aggiunta della risorsa di nuovo al pool
         resource_pool.append(resource)
-        
         # Attendi un po' prima di continuare
         time.sleep(random.uniform(0.5, 1.5))
-
 # Creazione di alcuni thread che richiedono l'accesso alle risorse
 threads = []
 for i in range(10):

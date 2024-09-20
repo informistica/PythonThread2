@@ -16,9 +16,6 @@ def thread_1():
     # Rilascio delle risorse
     resource_b.release()
     resource_a.release()
-  
-    
-
 # Funzione per l'esecuzione del secondo thread
 def thread_2():
     # Acquisizione del lock sulla risorsa B

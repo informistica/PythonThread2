@@ -32,6 +32,7 @@ def producer(producer_id):
         except :
             print("La coda è piena, impossibile inserire. Salto l'inserimento.")
             time.sleep(random.uniform(0.5, 1.5))
+            pass
 
 # Funzione per il consumatore
 def consumer(consumer_id):

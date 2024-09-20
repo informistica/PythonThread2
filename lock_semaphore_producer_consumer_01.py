@@ -34,7 +34,7 @@ def consumer(consumer_id):
     while True:
         # Acquisisce il semaforo per accedere al buffer
         #buffer_semaphore.acquire() #spiega perché con questa si verifica un deadlock    #  il semaforo viene acquisito in modo bloccante, causando il deadlock se non è immediatamente disponibile.
-        buffer_semaphore.acquire(False)
+        buffer_semaphore.acquire(blocking=False)
         print(f"Consumatore {consumer_id} tenta di acquisire la risorsa...")
         # Preleva un dato dal buffer
         data = buffer.get()

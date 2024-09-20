@@ -3,7 +3,7 @@ import threading
 import time
 
 # Creazione di una coda con dimensione massima di 3 elementi
-q = queue.Queue(maxsize=1)
+q = queue.Queue(maxsize=2)
 
 # Funzione per inserire elementi nella coda
 def producer():
@@ -16,7 +16,7 @@ def producer():
             q.put(i, block=True, timeout=4)  # Inserimento con timeout di 2 secondi
             print(f"Produttore ha inserito {i} nella coda.[num elem nella coda {q.qsize()}]-> [{list(q.queue)}]")
         except queue.Full:
-            print("La coda è piena, impossibile inserire. Saltando l'inserimento.")
+            print(f"La coda è piena, impossibile inserire. Salto l'inserimento. num elem nella coda {q.qsize()}]-> [{list(q.queue)}]")
             time.sleep(1)  # Attendi un secondo prima di riprovare l'inserimento
 
 # Funzione per rimuovere elementi dalla coda
@@ -27,12 +27,13 @@ def consumer():
         try:
             #item = q.get(block=True, timeout=2)  # Rimozione con timeout di 2 secondi
             item = q.get(block=False) 
-            print(f"Consumatore ha prelevato {item} dalla coda.um elem nella coda {q.qsize()}]-> [{list(q.queue)}]")
+            print(f"Consumatore ha prelevato {item} dalla coda. num elem nella coda {q.qsize()}]-> [{list(q.queue)}]")
         except queue.Empty:
-            print("La coda è vuota, impossibile prelevare.")
+            print("La coda è vuota, impossibile prelevare. Salto il prelievo.")
 
 # Creazione dei thread per il produttore e il consumatore
 producer_thread = threading.Thread(target=producer)
+producer_thread2 = threading.Thread(target=producer)
 consumer_thread = threading.Thread(target=consumer)
 
 # Avvio dei thread
