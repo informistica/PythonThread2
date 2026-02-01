@@ -11,7 +11,7 @@ imprevisto di counter.
 import threading
 import time
 from random import randint
-
+tanti=0
 def scarica():
     global tanti
     totS = tanti - 3

@@ -1,4 +1,4 @@
-import threading
+import threading 
 a=0
 def inc():
     # sezione critica:  avvengono operazioni su risorse condivise 
@@ -8,9 +8,9 @@ def inc():
 
 def call_inc():
     for _ in range(200000):
-        lock.acquire()
+        #lock.acquire()
         inc()
-        lock.release()
+        #lock.release()
 
 def task():
     global a
